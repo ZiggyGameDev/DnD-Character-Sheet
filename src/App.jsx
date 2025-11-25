@@ -109,7 +109,6 @@ function createBlankCharacter(name, proficiency = 2) {
 export default function App() {
   const [characters, setCharacters] = useState([demoCharacter]);
   const [activeId, setActiveId] = useState(demoCharacter.id);
-  const [activeTab, setActiveTab] = useState('overview');
 
   const character = useMemo(() => characters.find((c) => c.id === activeId) || characters[0], [characters, activeId]);
   const computedSpellcasting = useMemo(() => buildSpellcastingState(character), [character]);
@@ -212,43 +211,27 @@ export default function App() {
   const updateNotes = (notes) => updateCharacter((c) => ({ ...c, notes }));
   const updatePassives = (passives) => updateCharacter((c) => ({ ...c, passives }));
 
-  const tabs = [
-    {
-      id: 'overview',
-      label: 'Overview',
-      subtitle: 'Feature coverage snapshot',
-      content: (
+  return (
+    <div className="page">
+      <HeroHeader character={character} passiveScores={passiveScores} />
+      <main>
         <Section id="features" title="Feature Coverage" subtitle="Checklist from the architecture docs">
           <FeatureChecklist />
         </Section>
-      ),
-    },
-    {
-      id: 'roster',
-      label: 'Roster',
-      subtitle: 'Switch heroes and edit identity',
-      content: (
-        <>
-          <Section id="characters" title="Roster & Identity" subtitle="Switch heroes and keep core identity fields updated">
-            <div className="grid two">
-              <CharacterList
-                characters={characters}
-                activeId={character.id}
-                onSelect={setActiveId}
-                onAdd={addCharacter}
-              />
-              <IdentityCard character={character} onUpdate={(updated) => updateCharacter(updated)} />
-            </div>
-            <CombatStats character={character} />
-          </Section>
-        </>
-      ),
-    },
-    {
-      id: 'stats',
-      label: 'Stats',
-      subtitle: 'Abilities, saves, and passives',
-      content: (
+
+        <Section id="characters" title="Roster & Identity" subtitle="Switch heroes and keep core identity fields updated">
+          <div className="grid two">
+            <CharacterList
+              characters={characters}
+              activeId={character.id}
+              onSelect={setActiveId}
+              onAdd={addCharacter}
+            />
+            <IdentityCard character={character} onUpdate={(updated) => updateCharacter(updated)} />
+          </div>
+          <CombatStats character={character} />
+        </Section>
+
         <Section
           id="stats"
           title="Abilities & Proficiencies"
@@ -265,13 +248,7 @@ export default function App() {
           </div>
           <PassivesPanel passives={character.passives} onChange={updatePassives} />
         </Section>
-      ),
-    },
-    {
-      id: 'session',
-      label: 'Session',
-      subtitle: 'HP, conditions, and initiative',
-      content: (
+
         <Section
           id="session"
           title="Session Control"
@@ -298,13 +275,7 @@ export default function App() {
             />
           </div>
         </Section>
-      ),
-    },
-    {
-      id: 'magic',
-      label: 'Magic',
-      subtitle: 'Spells, slots, and rests',
-      content: (
+
         <Section id="spells" title="Spells & Slots" subtitle="Prepared/known spells, multiclass slots, and rest shortcuts">
           <div className="grid two">
             <SpellbookPanel spellcasting={computedSpellcasting} onUpdateSlots={handleSpellUpdate} />
@@ -317,45 +288,13 @@ export default function App() {
             />
           </div>
         </Section>
-      ),
-    },
-    {
-      id: 'tools',
-      label: 'Tools',
-      subtitle: 'Dice roller and notes',
-      content: (
+
         <Section id="tools" title="Dice, Notes, & Journal" subtitle="Quick rolls and campaign context">
           <div className="grid two">
             <DiceRoller proficiency={character.proficiency} abilities={character.abilities} />
             <NotesPanel notes={character.notes} onUpdate={updateNotes} />
           </div>
         </Section>
-      ),
-    },
-  ];
-
-  return (
-    <div className="page">
-      <HeroHeader character={character} passiveScores={passiveScores} />
-      <main>
-        <div className="tabs" role="tablist" aria-label="Character manager navigation">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-              className={`tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-            >
-              <div className="tab-label">{tab.label}</div>
-              <div className="tab-subtitle">{tab.subtitle}</div>
-            </button>
-          ))}
-        </div>
-
-        <div className="tab-panel" role="tabpanel">
-          {tabs.find((t) => t.id === activeTab)?.content}
-        </div>
       </main>
       <footer className="footer">
         <p className="muted">

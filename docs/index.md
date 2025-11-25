@@ -23,7 +23,3 @@ Head to the full [Architecture document](architecture.md) for detailed guidance.
 
 To publish the interactive demo to GitHub Pages, run `npm run build:pages`; the static assets land in `docs/site/` so Pages can
 serve both this documentation and the playable web app together.
-
-## GitHub Pages deployment
-- The repository now includes an automated workflow (`Deploy GitHub Pages`) that installs dependencies, runs the offline smoke tests, builds the static bundle into `docs/site`, and publishes it to Pages.
-- This ensures the hosted site serves compiled JavaScript (avoiding browser MIME errors from raw JSX) and stays in sync with the latest main branch changes.
